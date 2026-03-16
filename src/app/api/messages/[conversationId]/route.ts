@@ -13,13 +13,9 @@ export async function GET(req: NextRequest, { params }: { params: { conversation
   const conv = await prisma.conversation.findUnique({ where: { id: conversationId } })
   if (!conv) return Response.json({ error: 'Conversa não encontrada' }, { status: 404 })
 
-  // 2 days ago — Prisma handles this correctly with native Date
-  const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
-
   const messages = await prisma.message.findMany({
     where: {
       conversationId,
-      createdAt: { gte: twoDaysAgo },
     },
     orderBy: { createdAt: 'asc' },
     take: limit,

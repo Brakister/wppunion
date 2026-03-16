@@ -36,12 +36,16 @@ export default function DashboardPage() {
   const [filterAgent,     setFilterAgent]      = useState('')
   const [filterTag,       setFilterTag]        = useState('')
   const [searchTerm,      setSearchTerm]       = useState('')
-  const [notifCount,      setNotifCount]       = useState(0)
   const [typingUsers,     setTypingUsers]      = useState<Map<number, string>>(new Map())
   const [detailOpen,      setDetailOpen]       = useState(false)
   const [loadingMsgs,     setLoadingMsgs]      = useState(false)
 
   const activeConv = conversations.find(c => c.id === activeConvId) || null
+  const notifCount = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0)
+
+  const appendUniqueMessage = useCallback((message: Message) => {
+    setMessages(prev => (prev.some(m => m.id === message.id) ? prev : [...prev, message]))
+  }, [])
 
   // ── INIT ────────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -80,7 +84,7 @@ export default function DashboardPage() {
 
     s.on('conversation:new', ({ conversation }) => {
       setConversations(prev => [conversation, ...prev])
-      playNotif(); setNotifCount(n => n + 1)
+      playNotif()
     })
 
     s.on('conversation:updated', (update: Partial<Conversation> & { id: number }) => {
@@ -92,11 +96,11 @@ export default function DashboardPage() {
 
     s.on('message:new', ({ conversationId, message }: { conversationId: number; message: Message }) => {
       if (conversationId === activeConvIdRef.current) {
-        setMessages(prev => [...prev, message])
+        appendUniqueMessage(message)
         // mark read
         fetch(`/api/conversations/${conversationId}/read`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
       } else {
-        playNotif(); setNotifCount(n => n + 1)
+        playNotif()
       }
     })
 
@@ -171,13 +175,18 @@ export default function DashboardPage() {
       body: form,
     })
     const d = await r.json()
-    if (r.ok) setMessages(prev => [...prev, d.message])
+    if (r.ok) appendUniqueMessage(d.message)
   }
 
   async function sendNote(content: string) {
     if (!activeConvId || !content.trim()) return
     const d = await apiFetch(`/api/messages/${activeConvId}/note`, { method: 'POST', body: JSON.stringify({ content }) })
-    if (d) setMessages(prev => [...prev, d.message])
+    if (d) appendUniqueMessage(d.message)
+  }
+
+  async function clearNotifications() {
+    const d = await apiFetch('/api/conversations/read-all', { method: 'POST' })
+    if (d) setConversations(prev => prev.map(c => ({ ...c, unreadCount: 0 })))
   }
 
   function emitTyping(typing: boolean) {
@@ -215,7 +224,7 @@ export default function DashboardPage() {
         user={currentUser}
         waConnected={waConnected}
         notifCount={notifCount}
-        onNotifClear={() => setNotifCount(0)}
+        onNotifClear={clearNotifications}
         onWAClick={() => { setShowQR(true); checkWA() }}
         onAdmin={() => setShowAdmin(true)}
         onLogout={async () => { await apiFetch('/api/auth/logout', { method: 'POST' }); localStorage.clear(); router.replace('/login') }}

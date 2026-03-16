@@ -120,7 +120,7 @@ export default function ChatArea({ conversation, messages, loadingMsgs, currentU
       <div className={styles.msgs}>
         {loadingMsgs && <div className={styles.loading}>Carregando...</div>}
         {!loadingMsgs && messages.length === 0 && (
-          <div className={styles.noMsgs}>📭 Nenhuma mensagem nos últimos 2 dias</div>
+          <div className={styles.noMsgs}>📭 Nenhuma mensagem encontrada</div>
         )}
         {grouped.map(group => (
           <div key={group.day}>
