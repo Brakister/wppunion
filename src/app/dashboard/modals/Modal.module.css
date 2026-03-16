@@ -1,0 +1,203 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  padding: 20px;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  animation: mup .2s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalWide { max-width: 720px; }
+
+@keyframes mup {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 28px; height: 28px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2); font-size: 13px;
+  transition: color .15s;
+}
+.close:hover { color: var(--text); }
+
+.modal h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+/* QR */
+.qrWrap { text-align: center; }
+.qrImg {
+  width: 240px; height: 240px;
+  border-radius: 12px;
+  background: #fff;
+  padding: 8px;
+  display: block;
+  margin: 0 auto 16px;
+}
+.qrHint { font-size: 13px; color: var(--text2); line-height: 1.7; }
+.qrLoading { text-align: center; padding: 30px; color: var(--muted); font-size: 13px; }
+
+.connected    { text-align: center; padding: 30px 0; }
+.connIcon     { font-size: 48px; margin-bottom: 12px; }
+.connText     { font-size: 16px; color: var(--primary); font-weight: 500; }
+
+/* Admin tabs */
+.admTabs { display: flex; gap: 4px; margin-bottom: 18px; flex-wrap: wrap; }
+.admTab {
+  padding: 7px 14px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text2);
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+}
+.admTab.active {
+  background: var(--surface2);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Stats */
+.statGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.statCard { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.statVal  { font-size: 26px; font-weight: 700; color: var(--text); }
+.statLbl  { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* Table */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.tbl td { padding: 9px 10px; border-bottom: 1px solid var(--border2); color: var(--text2); }
+.tbl tr:hover td { background: var(--surface2); }
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.badgeAdmin { background: rgba(242,139,130,.1); color: var(--error); }
+.badgeAgent { background: rgba(130,180,243,.1); color: var(--info); }
+
+.olDot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+.olOn  { background: var(--primary); }
+.olOff { background: var(--muted); }
+
+/* Forms */
+.formRow { display: flex; gap: 10px; }
+.fg { margin-bottom: 12px; flex: 1; }
+.fg label {
+  display: block;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); margin-bottom: 5px;
+}
+.fg input, .fg select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 11px;
+  color: var(--text); font-size: 13px;
+  outline: none;
+  transition: border-color .2s;
+}
+.fg input:focus, .fg select:focus { border-color: rgba(0,168,132,.4); }
+
+.foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+.btnP {
+  background: var(--primary); color: #fff;
+  font-size: 13px; font-weight: 600;
+  border: none; border-radius: 8px;
+  padding: 9px 20px; cursor: pointer;
+  transition: opacity .2s;
+}
+.btnP:hover { opacity: .88; }
+.btnP:disabled { opacity: .4; cursor: not-allowed; }
+
+.btnG {
+  background: transparent; color: var(--text2);
+  font-size: 13px;
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 16px; cursor: pointer;
+  transition: all .15s;
+}
+.btnG:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+
+/* Inline add row */
+.addRow { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; }
+.addInput {
+  flex: 1;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 7px 10px;
+  color: var(--text); font-size: 13px; outline: none;
+}
+.addInput:focus { border-color: rgba(0,168,132,.4); }
+
+/* Tags list */
+.tagsList { display: flex; flex-wrap: wrap; gap: 6px; }
+.tagChip {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.chipDel {
+  background: none; border: none; cursor: pointer;
+  opacity: .6; font-size: 12px; color: inherit;
+}
+.chipDel:hover { opacity: 1; }
+
+/* Dept list */
+.deptList { display: flex; flex-direction: column; gap: 2px; }
+.deptItem {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border2);
+  font-size: 13px; color: var(--text2);
+}
+.deptDel {
+  background: none; border: none; cursor: pointer;
+  color: var(--error); font-size: 12px;
+}
+
+.topAction { display: flex; justify-content: flex-end; margin-bottom: 12px; }

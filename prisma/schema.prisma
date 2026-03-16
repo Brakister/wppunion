@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  password     String
+  role         String    @default("agent")
+  departmentId Int?
+  avatar       String?
+  isOnline     Boolean   @default(false)
+  lastSeen     DateTime?
+  createdAt    DateTime  @default(now())
+
+  department    Department?    @relation(fields: [departmentId], references: [id])
+  sessions      Session[]
+  messages      Message[]
+  conversations Conversation[] @relation("AssignedTo")
+}
+
+model Department {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  color     String   @default("#00a884")
+  createdAt DateTime @default(now())
+
+  users         User[]
+  conversations Conversation[]
+}
+
+model Conversation {
+  id            Int      @id @default(autoincrement())
+  waId          String   @unique
+  contactName   String?
+  contactNumber String
+  status        String   @default("open")
+  assignedTo    Int?
+  departmentId  Int?
+  unreadCount   Int      @default(0)
+  lastMessage   String?
+  lastMessageAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  user         User?       @relation("AssignedTo", fields: [assignedTo], references: [id])
+  department   Department? @relation(fields: [departmentId], references: [id])
+  messages     Message[]
+  tags         ConversationTag[]
+}
+
+model Message {
+  id             Int      @id @default(autoincrement())
+  conversationId Int
+  waMessageId    String?
+  senderType     String   @default("client")
+  senderId       Int?
+  senderName     String?
+  messageType    String   @default("text")
+  content        String?
+  fileUrl        String?
+  fileName       String?
+  fileSize       Int?
+  mimeType       String?
+  isRead         Boolean  @default(false)
+  isDelivered    Boolean  @default(false)
+  isNote         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User?        @relation(fields: [senderId], references: [id])
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  color     String   @default("#00a884")
+  createdAt DateTime @default(now())
+
+  conversations ConversationTag[]
+}
+
+model ConversationTag {
+  conversationId Int
+  tagId          Int
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  tag          Tag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, tagId])
+}
+
+model Session {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  token     String    @unique
+  ip        String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

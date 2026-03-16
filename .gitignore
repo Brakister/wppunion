@@ -1,0 +1,9 @@
+node_modules/
+.next/
+sessions/
+uploads/
+prisma/database.db
+prisma/*.db-journal
+.env
+*.backup.*
+*.bak.*
